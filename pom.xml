@@ -28,8 +28,8 @@
 
     <repositories>
         <repository>
-            <id>central maven repo</id>
-            <name>central maven repo https</name>
+            <id>central</id>
+            <name>centralRepo</name>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
