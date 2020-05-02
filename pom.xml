@@ -7,6 +7,19 @@
     <groupId>com.epam.mentoring</groupId>
     <artifactId>UITests</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <cucumber.version>4.2.6</cucumber.version>
+        <selenium-java.version>3.141.59</selenium-java.version>
+        <awaitility.version>3.0.0</awaitility.version>
+        <lombok.version>1.18.12</lombok.version>
+        <logback-classic.version>1.2.3</logback-classic.version>
+        <webdrivermanager.version>3.8.1</webdrivermanager.version>
+        <aspectj.version>1.8.10</aspectj.version>
+        <allure-cucumber-jvm-adaptor.version>1.6.2</allure-cucumber-jvm-adaptor.version>
+        <allure-commons.version>1.4.23</allure-commons.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -22,6 +35,29 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.1</version>
+                <configuration>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        -Dcucumber.options="--plugin io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm"
+                    </argLine>
+                    <systemPropertyVariables>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                        <allure.link.issue.pattern>https://example.org/browse/{}</allure.link.issue.pattern>
+                        <allure.link.tms.pattern>https://example.org/browse/{}</allure.link.tms.pattern>
+                    </systemPropertyVariables>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.9</version>
             </plugin>
         </plugins>
     </build>
@@ -51,15 +87,6 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <properties>
-        <cucumber.version>4.2.6</cucumber.version>
-        <selenium-java.version>3.141.59</selenium-java.version>
-        <awaitility.version>3.0.0</awaitility.version>
-        <lombok.version>1.18.12</lombok.version>
-        <logback-classic.version>1.2.3</logback-classic.version>
-        <webdrivermanager.version>3.8.1</webdrivermanager.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -115,6 +142,13 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback-classic.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!--Reporting-->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-cucumber4-jvm</artifactId>
+            <version>2.13.3</version>
         </dependency>
     </dependencies>
 </project>
