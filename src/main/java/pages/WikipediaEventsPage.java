@@ -2,7 +2,7 @@ package pages;
 
 import base.DriverFactory;
 import config.DriverTimeouts;
-import config.Utils;
+import config.BrowserUtils;
 import enums.Locations;
 import helpers.DateHelper;
 import org.awaitility.Awaitility;
@@ -33,7 +33,7 @@ public class WikipediaEventsPage extends DriverFactory {
     public void openWikipediaTodayEventsPage() {
 
         String todayDate = dateHelper.getTodayDate();
-        String url = Utils.getBaseUrl() + todayDate;
+        String url = BrowserUtils.getBaseUrl() + todayDate;
         driver.get(url);
     }
 

@@ -1,7 +1,7 @@
 package base;
 
 import config.DriverTimeouts;
-import config.Utils;
+import config.BrowserUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -9,7 +9,6 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
 
 public class DriverFactory {
     protected static WebDriver driver;
@@ -17,7 +16,7 @@ public class DriverFactory {
 
     public WebDriver createDriver() {
         if (driver == null) {
-            String browserName = Utils.getBrowserName();
+            String browserName = BrowserUtils.getBrowserName();
             if ("firefox".equals(browserName)) {
                 WebDriverManager.firefoxdriver().setup();
                 driver = new FirefoxDriver();
