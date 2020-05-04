@@ -144,6 +144,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <artifactId>assertj-core</artifactId>
+            <groupId>org.assertj</groupId>
+            <version>3.13.2</version>
+        </dependency>
+
         <!--Reporting-->
         <dependency>
             <groupId>io.qameta.allure</groupId>

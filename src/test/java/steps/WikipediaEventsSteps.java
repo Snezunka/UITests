@@ -6,6 +6,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import pages.WikipediaEventsPage;
 
 import static contexts.ScenarioContext.Context.NUMBER_OF_ARTICLES_WITH_GEO_POINT_TODAY;
@@ -42,13 +43,16 @@ public class WikipediaEventsSteps {
     public void compareNumberOfArticlesForTodayAndTomorrow() {
         int numberOfArticlesToday = scenarioContext.getContext(NUMBER_OF_ARTICLES_WITH_GEO_POINT_TODAY);
         int numberOfArticlesTomorrow = scenarioContext.getContext(NUMBER_OF_ARTICLES_WITH_GEO_POINT_TOMORROW);
-        if (numberOfArticlesToday > numberOfArticlesTomorrow) {
-            log.info(String.format("Number of articles with GEO points for today %s is bigger than %s for tomorrow",
-                    numberOfArticlesToday, numberOfArticlesTomorrow));
-        } else if (numberOfArticlesToday < numberOfArticlesTomorrow) {
-            log.info(String.format("Number of articles with GEO points for today %s is less than %s for tomorrow",
-                    numberOfArticlesToday, numberOfArticlesTomorrow));
-        } else log.info(String.format("Number of articles with GEO points for today %s is equal to %s for tomorrow",
-                numberOfArticlesToday, numberOfArticlesTomorrow));
+//        if (numberOfArticlesToday > numberOfArticlesTomorrow) {
+////            log.info(String.format("Number of articles with GEO points for today %s is bigger than %s for tomorrow",
+////                    numberOfArticlesToday, numberOfArticlesTomorrow));
+////        } else if (numberOfArticlesToday < numberOfArticlesTomorrow) {
+////            log.info(String.format("Number of articles with GEO points for today %s is less than %s for tomorrow",
+////                    numberOfArticlesToday, numberOfArticlesTomorrow));
+////        } else log.info(String.format("Number of articles with GEO points for today %s is equal to %s for tomorrow",
+////                numberOfArticlesToday, numberOfArticlesTomorrow));
+        Assertions.assertThat(numberOfArticlesToday)
+            .as("Number of articles today should be equals number of articles tomorrow")
+            .isEqualTo(numberOfArticlesTomorrow);
     }
 }

@@ -24,52 +24,37 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Hooks {
 
-  private static int MY_PROJECT_ID = TestRailUtils.getTestRailProjectId();
+  private static int myProjectId;
   private static int testsRunId;
   private static TestRail testRail;
   private static Project myProject;
   private static Case testCase;
   private static Suite testSuite;
-  private static List<Case> testCasesInSystem;
   private static List<CaseField> caseFields;
   private static List<ResultField> resultFields;
   private static boolean hasTestRailRunCreationAllowed;
+  private DriverFactory driverFactory = new DriverFactory();
 
   static {
-    MY_PROJECT_ID = TestRailUtils.getTestRailProjectId();
+    myProjectId = TestRailUtils.getTestRailProjectId();
     hasTestRailRunCreationAllowed = TestRailUtils.getTestRailRunCreation();
     if (hasTestRailRunCreationAllowed) {
       testRail = TestRail
           .builder(TestRailUtils.getTestRailEndPoint(), TestRailUtils.getTestRailUser(),
               TestRailUtils.getTestRailPassword()).applicationName("playground").build();
-      myProject = testRail.projects().get(MY_PROJECT_ID).execute();
+      myProject = testRail.projects().get(myProjectId).execute();
       caseFields = testRail.caseFields().list().execute();
-      testCasesInSystem = testRail.cases().list(myProject.getId(), caseFields).execute();
       resultFields = testRail.resultFields().list().execute();
       testSuite = testRail.suites().get(TestRailUtils.getTestRailSuiteId()).execute();
+      createNewTestRun();
     }
   }
 
-  DriverFactory driverFactory = new DriverFactory();
-
-  @Before(order = 2)
+  @Before
   public void beforeScenario(Scenario scenario) {
     log.info("**********************************************");
     log.info("Start new test: " + scenario.getName());
     driverFactory.createDriver();
-  }
-
-  @Before(order = 1)
-  public void createTestRunIfNeeded() {
-    if (hasTestRailRunCreationAllowed) {
-      testsRunId = testRail
-          .runs()
-          .add(myProject.getId(), new Run()
-              .setMilestoneId(1)
-              .setName("AutomationRun" + new SimpleDateFormat("dd/MM/yy HH:mm").format(new Date())))
-          .execute()
-          .getId();
-    }
   }
 
   @After(order = 3)
@@ -82,28 +67,38 @@ public class Hooks {
         .get();
   }
 
+  @After(order = 2)
+  public void setTestResultsInTestRail(Scenario scenario) {
+    Type scenarioStatus = scenario.getStatus();
+    testRail
+        .results()
+        .addForCase(testsRunId, testCase.getId(),
+            new Result().setStatusId(getStatusMap().get(scenarioStatus)), resultFields)
+        .execute();
+  }
+
   @After(order = 1)
   public void afterAll() {
     driverFactory.tearDown();
   }
 
-  @After(order = 2)
-  public void setTestResultsInTestRail(Scenario scenario) {
-      Type scenarioStatus = scenario.getStatus();
-      testRail
-          .results()
-          .addForCase(testsRunId, testCase.getId(), new Result().setStatusId(getStatusMap().get(scenarioStatus)), resultFields)
-          .execute();
+  private Map<Type, Integer> getStatusMap() {
+    Map<Type, Integer> map = new HashMap<>();
+    map.put(Type.PASSED, 1);
+    map.put(Type.SKIPPED, 2);
+    map.put(Type.PENDING, 3);
+    map.put(Type.UNDEFINED, 4);
+    map.put(Type.FAILED, 5);
+    return map;
   }
 
-  private Map<Type, Integer> getStatusMap() {
-      Map<Type, Integer> map = new HashMap<>();
-      map.put(Type.PASSED, 1);
-      map.put(Type.SKIPPED, 2);
-      map.put(Type.PENDING, 3);
-      map.put(Type.UNDEFINED, 4);
-      map.put(Type.AMBIGUOUS, 5);
-      map.put(Type.FAILED, 6);
-      return map;
+  private static void createNewTestRun() {
+    testsRunId = testRail
+        .runs()
+        .add(myProject.getId(), new Run()
+            .setMilestoneId(TestRailUtils.getTestRailMilestoneId())
+            .setName("AutomationRun " + new SimpleDateFormat("dd/MM/yy HH:mm").format(new Date())))
+        .execute()
+        .getId();
   }
 }

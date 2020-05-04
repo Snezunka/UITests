@@ -22,10 +22,11 @@ public class TestRailUtils extends Utils {
     return Boolean.parseBoolean(getProperties("testRail.properties").getProperty("testRail.runCreation"));
   }
 
-  public static int getTestRailRunId() {
-    return Integer.parseInt(getProperties("testRail.properties").getProperty("testRail.runId"));
-  }
   public static int getTestRailSuiteId() {
     return Integer.parseInt(getProperties("testRail.properties").getProperty("testRail.suiteId"));
+  }
+
+  public static int getTestRailMilestoneId() {
+    return Integer.parseInt(getProperties("testRail.properties").getProperty("testRail.milestoneId"));
   }
 }
